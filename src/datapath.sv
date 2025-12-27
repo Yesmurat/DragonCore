@@ -186,27 +186,48 @@ module datapath (
     assign PCSrcE = (BranchE & branchTakenE) | JumpE;
     assign ResultSrcE_zero = ResultSrcE[0];
 
-    // SrcA mux
-    mux4 inputA_mux(
-        .d0(RD1E),
-        .d1(ResultW),
-        .d2(ALUResultM),
-        .d3(PCE),
-        .s(ForwardAE),
-        .y(SrcAE)
+    // Source A logic
+    logic [31:0] SrcAE_input1;
+
+    mux3 SrcAE_input1mux(
+
+        .d0 (RD1E),
+        .d1 (ResultW),
+        .d2 (ALUResultM),
+        .s  (ForwardAE),
+        .y  (SrcAE_input1)
+
     );
 
-    // SrcB mux
-    mux4 inputB_mux(
-        .d0(RD2E),
-        .d1(ResultW),
-        .d2(ALUResultM),
-        .d3(ImmExtE),
-        .s(ForwardBE),
-        .y(SrcBE)
+    mux2 SrcAEmux(
+
+        .d0 (SrcAE_input1),
+        .d1 (PCE),
+        .s  (SrcAsrcE),
+        .y  (SrcAE)
+
     );
 
-    assign WriteDataE = SrcBE;;
+    // Source B logic
+
+    mux3 WriteDataEmux(
+
+        .d0 (RD2E),
+        .d1 (ResultW),
+        .d2 (ALUResultM),
+        .s  (ForwardBE),
+        .y  (WriteDataE)
+
+    );
+
+    mux2 SrcBEmux(
+
+        .d0 (WriteDataE),
+        .d1 (ImmExtE),
+        .s  (ALUSrcE),
+        .y  (SrcBE)
+
+    );
 
     branch_unit bu(
 
@@ -346,7 +367,8 @@ module datapath (
         .d2 (PCPlus4W),
         .d3 (ImmExtW),
         .s  (ResultSrcW),
-        .y  (ResultW)
+        .y(ResultW)
+
     );
 
 endmodule
