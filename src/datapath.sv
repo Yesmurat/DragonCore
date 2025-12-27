@@ -2,48 +2,61 @@
 
 module datapath (
     
-                input logic clk, clr,
+                input logic         clk,
+                input logic         clr,
                 // Control signals
-                input logic RegWriteD,
-                input logic [1:0] ResultSrcD,
-                input logic MemWriteD,
-                input logic JumpD,
-                input logic BranchD,
-                input logic [3:0] ALUControlD,
-                input logic ALUSrcD,
-                input logic [2:0] ImmSrcD,
-                input logic SrcAsrcD,
-                input logic [2:0] funct3D,
-                input logic jumpRegD,
+                input logic         RegWriteD,
+                input logic  [1:0]  ResultSrcD,
+                input logic         MemWriteD,
+                input logic         JumpD,
+                input logic         BranchD,
+                input logic  [3:0]  ALUControlD,
+                input logic         ALUSrcD,
+                input logic  [2:0]  ImmSrcD,
+                input logic         SrcAsrcD,
+                input logic  [2:0]  funct3D,
+                input logic         jumpRegD,
                 
                 // input signals from Hazard Unit
-                input logic StallF,
-                input logic StallD,
-                input logic FlushD,
-                input logic FlushE,
-                input logic [1:0] ForwardAE,
-                input logic [1:0] ForwardBE,
+                input logic         StallF,
+                input logic         StallD,
+                input logic         FlushD,
+                input logic         FlushE,
+                input logic  [1:0]  ForwardAE,
+                input logic  [1:0]  ForwardBE,
 
-                input logic [31:0] RD_instr, RD_data,
+                input logic  [31:0] RD_instr,
+                input logic  [31:0] RD_data,
 
                 // outputs
-                output logic [31:0] PCF, // input for Instruction Memory
-                output logic [31:0] ALUResultM, WriteDataM, // inputs to Data Memory
-                output logic MemWriteM, // we signal for data memory
-                output logic [31:0] InstrD, // input to Control Unit
-                output logic [3:0] byteEnable, // input to data memory
+                output logic [31:0] PCF,
+                output logic [31:0] ALUResultM,
+                output logic [31:0] WriteDataM,
+
+                output logic        MemWriteM,
+                output logic [31:0] InstrD,
+                output logic [3:0]  byteEnable,
 
                 // outputs to Hazard Unit
-                output logic [4:0] Rs1D, Rs2D, // outputs from ID stage
-                output logic [4:0] Rs1E, Rs2E,
-                output logic [4:0] RdE, // outputs from EX stage
-                output logic PCSrcE, ResultSrcE_zero, RegWriteM, RegWriteW,
-                output logic [4:0] RdM, // output from MEM stage
-                output logic [4:0] RdW, // output from WB stage
-                output logic SrcAsrcE,
-                output logic ALUSrcE
+                output logic [4:0]  Rs1D,
+                output logic [4:0]  Rs2D,
+                output logic [4:0]  Rs1E,
+                output logic [4:0]  Rs2E,
+                output logic [4:0]  RdE,
 
-);  
+                output logic        PCSrcE,
+                output logic        ResultSrcE_zero,
+                output logic        RegWriteM,
+                output logic        RegWriteW,
+
+                output logic [4:0]  RdM,
+                output logic [4:0]  RdW,
+
+                output logic        SrcAsrcE,
+                output logic        ALUSrcE
+
+);
+
     // PC mux
     logic [31:0] PCPlus4F, PCTargetE, PCF_new;
 
