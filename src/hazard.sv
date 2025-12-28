@@ -8,8 +8,6 @@ module hazard (
         input logic        RegWriteM,
         input logic  [4:0] RdW,
         input logic        RegWriteW,
-        input logic        SrcAsrcE,
-        input logic        ALUSrcE,
 
         output logic       StallF,
         output logic       StallD, FlushD,
@@ -22,54 +20,32 @@ module hazard (
 
     always_comb begin
 
-        ForwardAE = 2'b00;
-        ForwardBE = 2'b00;
-
-        // Forwarding
-
-        if (SrcAsrcE) begin
-
-            // PC used instead of RD1E
-            ForwardAE = 2'b11;
-
-        end
-        
-        else if ( ( (Rs1E == RdM) && RegWriteM ) && (Rs1E != 0) ) begin
-
+        // Source A forwarding
+        if ( ( (Rs1E == RdM) && RegWriteM ) && (Rs1E != 0) )
             ForwardAE = 2'b10;
 
-        end
-        
-        else if ( ((Rs1E == RdW) && RegWriteW) && (Rs1E != 0) ) begin
-
+        else if ( ( (Rs1E == RdW) && RegWriteW ) && (Rs1E != 0) )
             ForwardAE = 2'b01;
 
-        end
+        else
+            ForwardAE = 2'b00;
 
-        if (ALUSrcE) begin
-
-            // Immediate used instead of RD2E
-            ForwardBE = 2'b11;
-
-        end
-        
-        else if ( ( (Rs2E == RdM) && RegWriteM ) && (Rs2E != 0) ) begin
-
+        // Source B forwarding
+        if ( ( (Rs2E == RdM) && RegWriteM ) && (Rs2E != 0) )
             ForwardBE = 2'b10;
 
-        end
-        
-        else if ( ((Rs2E == RdW) && RegWriteW) && (Rs2E != 0) ) begin
-
+        else if ( ( (Rs2E == RdW) && RegWriteW ) && (Rs2E != 0) )
             ForwardBE = 2'b01;
-            
-        end
 
+        else
+            ForwardBE = 2'b00;
+        
     end
 
-    // Stall when a load hazard occurs
+    // Load-use hazard
     assign lwStall = ResultSrcE_zero & ( (Rs1D == RdE) | (Rs2D == RdE) );
 
+    // Stall IF & ID when a load hazard occurs
     assign StallF = lwStall;
     assign StallD = lwStall;
 

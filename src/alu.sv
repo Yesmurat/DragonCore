@@ -1,8 +1,10 @@
 module alu (
     
-        input logic  [31:0] d0, d1,
-        input logic  [3:0]  s,
-        output logic [31:0] y
+        input logic  [31:0]     d0,
+        input logic  [31:0]     d1,
+        input logic  [3:0]      s,
+        
+        output logic [31:0]     y
         
     );
 

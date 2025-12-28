@@ -15,7 +15,6 @@ module datapath (
                 input logic         ALUSrcD,
                 input logic  [2:0]  ImmSrcD,
                 input logic         SrcAsrcD,
-                input logic  [2:0]  funct3D,
                 input logic         jumpRegD,
                 
                 // input signals from Hazard Unit
@@ -29,14 +28,18 @@ module datapath (
                 input logic  [31:0] RD_instr,
                 input logic  [31:0] RD_data,
 
-                // outputs
+                // outputs to instr & data memories
                 output logic [31:0] PCF,
+
                 output logic [31:0] ALUResultM,
                 output logic [31:0] WriteDataM,
-
                 output logic        MemWriteM,
-                output logic [31:0] InstrD,
                 output logic [3:0]  byteEnable,
+
+                // outputs to controller
+                output logic [6:0] opcode,
+                output logic [2:0] funct3,
+                output logic [6:0] funct7,
 
                 // outputs to Hazard Unit
                 output logic [4:0]  Rs1D,
@@ -51,10 +54,7 @@ module datapath (
                 output logic        RegWriteW,
 
                 output logic [4:0]  RdM,
-                output logic [4:0]  RdW,
-
-                output logic        SrcAsrcE,
-                output logic        ALUSrcE
+                output logic [4:0]  RdW
 
 );
 
@@ -75,7 +75,7 @@ module datapath (
         
         .clk    (clk),
         .en     (~StallF),
-        .reset    (reset),
+        .reset  (reset),
         .d      (PCF_new),
         .q      (PCF)
 
@@ -89,6 +89,7 @@ module datapath (
     logic [31:0] ResultW;
     logic [31:0] ImmExtD;
     logic [4:0] RdD;
+    logic [31:0] InstrD;
 
     assign Rs1D = InstrD[19:15];
     assign Rs2D = InstrD[24:20];
@@ -96,25 +97,27 @@ module datapath (
 
     assign opcode = InstrD[6:0];
     assign funct3 = InstrD[14:12];
+    assign funct7 = InstrD[31:25];
 
     IFIDregister ifidreg(
 
         .clk        (clk),
-        .reset        (FlushD | reset),
+        .reset      (FlushD | reset),
         .en         (~StallD),
         .RD_instr   (RD_instr),
         .PCF        (PCF),
         .PCPlus4F   (PCPlus4F),
-        .InstrD     (InstrD), .PCD(PCD),
+        .InstrD     (InstrD),
+        .PCD        (PCD),
         .PCPlus4D   (PCPlus4D)
 
     );
 
-    regfile rf(
+    regfile regfile(
 
         .clk    (clk),
         .we3    (RegWriteW),
-        .reset    (reset),
+        .reset  (reset),
         .a1     (Rs1D),
         .a2     (Rs2D),
         .a3     (RdW),
@@ -124,11 +127,11 @@ module datapath (
 
     );
 
-    extend ext(
+    extend extender(
 
-        .instr  (InstrD),
-        .immsrc (ImmSrcD),
-        .immext (ImmExtD)
+        .instr_31_7  (InstrD[31:7]),
+        .immsrc      (ImmSrcD),
+        .immext      (ImmExtD)
 
     );
 
@@ -152,7 +155,7 @@ module datapath (
     IDEXregister idexreg(
 
         .clk            (clk),
-        .reset            (FlushE | reset),
+        .reset          (FlushE | reset),
 
         // ID stage control signals
         .RegWriteD      (RegWriteD),
@@ -163,7 +166,7 @@ module datapath (
         .ALUControlD    (ALUControlD),
         .ALUSrcD        (ALUSrcD),
         .SrcAsrcD       (SrcAsrcD),
-        .funct3D        (funct3D),
+        .funct3D        (funct3),
         .jumpRegD       (jumpRegD),
 
         // EX stage control signals
@@ -245,7 +248,7 @@ module datapath (
 
     );
 
-    branch_unit bu(
+    branch_unit branch_unit(
 
         .SrcAE          (SrcAE),
         .SrcBE          (SrcBE),
@@ -259,7 +262,7 @@ module datapath (
 
     assign PCTargetE = adder_base + ImmExtE;
 
-    alu alu(
+    alu ALU(
 
         .d0 (SrcAE),
         .d1 (SrcBE),
@@ -282,7 +285,7 @@ module datapath (
     EXMEMregister exmemreg(
 
         .clk        (clk),
-        .reset        (reset),
+        .reset      (reset),
 
         // EX stage control signals
         .RegWriteE  (RegWriteE),
@@ -370,10 +373,10 @@ module datapath (
     logic [31:0] ImmExtW;
     logic [1:0] ResultSrcW;
 
-    MEMWBregister wbreg(
+    MEMWBregister memwbreg(
 
         .clk        (clk),
-        .reset        (reset),
+        .reset      (reset),
 
         // MEM stage control signals
         .RegWriteM  (RegWriteM),
@@ -405,7 +408,7 @@ module datapath (
         .d2 (PCPlus4W),
         .d3 (ImmExtW),
         .s  (ResultSrcW),
-        .y(ResultW)
+        .y  (ResultW)
 
     );
 

@@ -1,8 +1,8 @@
 module controller (
     
-    input logic  [6:0] op,
+    input logic  [6:0] opcode,
     input logic  [2:0] funct3,
-    input logic        funct7b5,
+    input logic  [6:0] funct7,
 
     output logic       RegWriteD,
     output logic [1:0] ResultSrcD,
@@ -13,17 +13,15 @@ module controller (
     output logic       ALUSrcD,
     output logic [2:0] ImmSrcD,
     output logic       SrcAsrcD,
-    output logic [2:0] funct3D,
     output logic       jumpRegD
                    
     );
 
     logic [1:0] ALUOp;
-    assign funct3D = funct3;
 
     maindec md(
 
-        .op(op),
+        .opcode     (opcode),
         .ResultSrcD (ResultSrcD),
         .MemWriteD  (MemWriteD),
         .BranchD    (BranchD),
@@ -39,9 +37,9 @@ module controller (
 
     aludec ad(
 
-        .opb5       (op[5]),
+        .opb5       (opcode[5]),
         .funct3     (funct3),
-        .funct7b5   (funct7b5),
+        .funct7b5   (funct7[5]),
         .ALUOp      (ALUOp),
         .ALUControl (ALUControlD)
 

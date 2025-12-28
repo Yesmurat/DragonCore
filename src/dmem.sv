@@ -14,7 +14,7 @@ module dmem (
 
     logic [31:0] RAM[255:0];
     
-    initial $readmemh("...", RAM);
+    initial $readmemh("./memory/dmem.sv", RAM);
 
     always_ff @(posedge clk) begin
 

@@ -1,7 +1,7 @@
 module riscv (
 
         input logic         clk,
-        input logic         clr,
+        input logic         reset,
 
         // inputs from Instruction and Data memories
         input logic [31:0]  RD_instr,
@@ -26,9 +26,11 @@ module riscv (
     logic ALUSrcD;
     logic [2:0] ImmSrcD;
     logic SrcAsrcD;
-
-    logic [31:0] InstrD;
     logic ResultSrcE_zero;
+
+    logic [6:0] opcode;
+    logic [2:0] funct3;
+    logic [6:0] funct7;
 
     // Hazard unit wires
     logic StallF;
@@ -41,16 +43,13 @@ module riscv (
     logic [4:0] Rs1E, Rs2E, RdE;
     logic [4:0] RdM, RdW;
     logic RegWriteM, RegWriteW;
-    logic SrcAsrcE, ALUSrcE;
-
-    logic [2:0] funct3;
     logic jumpRegD;
 
-    controller c(
+    controller controller(
 
-        .op             (InstrD[6:0]),
-        .funct3         (InstrD[14:12]),
-        .funct7b5       (InstrD[30]),
+        .opcode         (opcode),
+        .funct3         (funct3), // input
+        .funct7         (funct7),
         
         .RegWriteD      (RegWriteD),
         .ResultSrcD     (ResultSrcD),
@@ -61,14 +60,13 @@ module riscv (
         .ALUSrcD        (ALUSrcD),
         .ImmSrcD        (ImmSrcD),
         .SrcAsrcD       (SrcAsrcD),
-        .funct3D        (funct3),
         .jumpRegD       (jumpRegD)
     );
 
-    datapath dp(
+    datapath datapath(
         
         .clk                (clk),
-        .clr                (clr),
+        .reset              (reset),
 
         // Control signals
         .RegWriteD          (RegWriteD),
@@ -80,7 +78,6 @@ module riscv (
         .ALUSrcD            (ALUSrcD),
         .ImmSrcD            (ImmSrcD),
         .SrcAsrcD           (SrcAsrcD),
-        .funct3D            (funct3),
         .jumpRegD           (jumpRegD),
 
         // inputs from Hazard unit
@@ -99,10 +96,14 @@ module riscv (
         .ALUResultM         (ALUResultM),
         .WriteDataM         (WriteDataM),
 		.MemWriteM          (MemWriteM),
-        .InstrD             (InstrD),
         .byteEnable         (byteEnable),
 
-        // outputs to Hazard unit
+        // outputs to controller
+        .opcode             (opcode),
+        .funct3             (funct3), // output
+        .funct7             (funct7),
+
+        // outputs to hazard unit
         .Rs1D               (Rs1D),
         .Rs2D               (Rs2D),
         .Rs1E               (Rs1E),
@@ -113,13 +114,11 @@ module riscv (
         .RegWriteW          (RegWriteW),
         .RdE                (RdE),
         .RdM                (RdM),
-        .RdW                (RdW),
-        .SrcAsrcE           (SrcAsrcE),
-        .ALUSrcE            (ALUSrcE)
+        .RdW                (RdW)
         
     );
 
-    hazard hu(
+    hazard hazard(
 
         .Rs1D               (Rs1D),
         .Rs2D               (Rs2D),
@@ -132,8 +131,6 @@ module riscv (
         .RegWriteM          (RegWriteM),
         .RdW                (RdW),
         .RegWriteW          (RegWriteW),
-        .SrcAsrcE           (SrcAsrcE),
-        .ALUSrcE            (ALUSrcE),
 
         .StallF             (StallF),
         .StallD             (StallD),

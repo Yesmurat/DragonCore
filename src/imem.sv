@@ -10,7 +10,7 @@ module imem (
 
     logic [31:0] ROM[255:0];
     
-    initial $readmemh("...", ROM);
+    initial $readmemh("./memory/imem.mem", ROM);
 
     assign rd = ROM[ a[31:2] ];
 

@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module aludec (
     
     input logic         opb5, // for sub detection
@@ -27,30 +25,39 @@ module aludec (
 
     always_comb begin
 
-            unique case (ALUOp)
+        unique case (ALUOp)
 
-                2'b00: ALUControl = ADD; // load/store, addi
+            2'b00: begin
 
-                2'b01: ALUControl = SUB; // brances
-
-                default: begin
-
-                    unique case (funct3)
+                ALUControl = ADD; // load/store, addi
                     
-                        3'b000: ALUControl = RtypeSub ? SUB : ADD;
-                        3'b001: ALUControl = SLL;
-                        3'b010: ALUControl = SLT; // slt/slti (signed)
-                        3'b011: ALUControl = SLTU; // sltu/sltiu (unsigned)
-                        3'b100: ALUControl = XOR;
-                        3'b101: ALUControl = funct7b5 ? SRA : SRL; // sra/srai or srl/srli
-                        3'b110: ALUControl = OR; // or/ori
-                        3'b111: ALUControl = AND; // and/andi
+            end
 
-                    endcase
+            2'b01: begin
 
-                end
-            endcase
+                ALUControl = SUB; // branches
+                    
+            end
 
-        end
+            default: begin
+
+                unique case (funct3)
+                    
+                    3'b000: ALUControl = RtypeSub ? SUB : ADD;
+                    3'b001: ALUControl = SLL;
+                    3'b010: ALUControl = SLT; // slt/slti (signed)
+                    3'b011: ALUControl = SLTU; // sltu/sltiu (unsigned)
+                    3'b100: ALUControl = XOR;
+                    3'b101: ALUControl = funct7b5 ? SRA : SRL; // sra/srai or srl/srli
+                    3'b110: ALUControl = OR; // or/ori
+                    3'b111: ALUControl = AND; // and/andi
+
+                endcase
+
+            end
+
+        endcase
+
+    end
 
 endmodule

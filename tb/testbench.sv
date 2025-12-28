@@ -1,38 +1,30 @@
-// Top module of RV32I RISC-V processor in SystemVerilog
-// top module combines riscv with data and instruction memories
+`timescale 1ns/1ps
 
-module top (
-    
-        input logic clk,
-        input logic clr,
-        output logic [3:0] LED
+module testbench;
 
-    );
+    localparam CLK_PERIOD = 10;
 
-    logic [31:0] ALUResultM;
-    logic [31:0] PCF;
-    logic [31:0] RD_instr;
-    logic [31:0] RD_data;
-    logic [31:0] WriteDataM;
-    logic MemWriteM;
-    logic [3:0] byteEnable; 
+    logic clk;
+    logic reset;
+    logic [3:0] LED;
 
-    riscv riscv(
+    top DUT(
+
         .clk(clk),
-        .clr(clr),
-        .RD_instr(RD_instr),
-        .RD_data(RD_data),
-        .PCF(PCF),
-        .ALUResultM(ALUResultM),
-        .WriteDataM(WriteDataM),
-        .MemWriteM(MemWriteM),
-        .byteEnable(byteEnable)
+        .reset(reset),
+        .LED(LED)
+
     );
 
-    imem im( .a(PCF), .rd(RD_instr) );
-    dmem dm(.clk(clk), .we(MemWriteM), .byteEnable(byteEnable),
-            .a(ALUResultM), .wd(WriteDataM), .rd(RD_data));
+    initial clk = 0;
+    always #(CLK_PERIOD/2) clk = ~clk;
 
-    assign LED = ALUResultM[3:0];
-    
+    initial begin
+        reset = 1;
+        #7;
+        reset = 0;
+        #1000;
+        $stop;
+    end
+
 endmodule

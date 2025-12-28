@@ -1,10 +1,12 @@
 // Top module of RV32I RISC-V processor in SystemVerilog
 // top module combines riscv with data and instruction memories
+`timescale 1ns/1ps
 
 module top (
     
         input logic        clk,
-        input logic        clr,
+        input logic        reset,
+        output logic [3:0] LED
 
     );
 
@@ -19,7 +21,7 @@ module top (
     riscv riscv(
 
         .clk        (clk),
-        .clr        (clr),
+        .reset      (reset),
         .RD_instr   (RD_instr),
         .RD_data    (RD_data),
         .PCF        (PCF),
@@ -30,14 +32,14 @@ module top (
 
     );
 
-    imem im(
+    imem imem(
         
         .a  (PCF),
         .rd (RD_instr)
         
     );
 
-    dmem dm(
+    dmem dmem(
         
         .clk        (clk),
         .we         (MemWriteM),
@@ -47,5 +49,7 @@ module top (
         .rd         (RD_data)
         
     );
+
+    assign LED = PCF[3:0];
     
 endmodule
