@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module mux2 (
     
         input logic  [31:0] d0, d1,

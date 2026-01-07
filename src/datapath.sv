@@ -24,7 +24,8 @@ module datapath (
 
                 output logic        ResultSrcE_zero,
                 output logic        RegWriteM,
-                output logic        RegWriteW
+                output logic        RegWriteW,
+                output logic        PCSrcE
 
 );
 
@@ -36,8 +37,10 @@ module datapath (
 
     logic [31:0] PCF_new;
     logic [31:0] PCPlus4F;
-    logic        PCSrcE;
     logic [31:0] PCTargetE;
+
+    logic [31:0] ResultW;
+    logic [31:0] ALUResultM;
 
     // PC mux
     mux2 pcmux(
@@ -110,8 +113,7 @@ module datapath (
 
     assign RdM = exmem.data.Rd;
     assign RegWriteM = exmem.ctrl.RegWrite;
-
-    logic [31:0] ResultW;
+    assign ALUResultM = memwb.wr.ALUResult;
 
     wb_stage WB (
 

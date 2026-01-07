@@ -12,12 +12,12 @@ module id_stage (
 
 );
 
-    logic [31:0] instr;
+    logic [31:0] Instr;
     logic [31:0] PC;
     logic [31:0] PCPlus4;
     logic [1:0] ImmSrc;
 
-    assign instr = inputs.data.instr;
+    assign Instr = inputs.data.instr;
 
     controller control_unit(
 
@@ -67,8 +67,8 @@ module id_stage (
     assign outputs.data.PC = inputs.data.PC;
     assign outputs.data.PCPlus4 = inputs.data.PCPlus4;
 
-    assign outputs.data.Rs1 = instr[19:15];
-    assign outputs.data.Rs2 = instr[24:20];
-    assign outputs.data.Rd =  instr[11:7];
+    assign outputs.data.Rs1 = Instr[19:15];
+    assign outputs.data.Rs2 = Instr[24:20];
+    assign outputs.data.Rd =  Instr[11:7];
 
 endmodule
