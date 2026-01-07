@@ -28,10 +28,18 @@ module datapath (
 
 );
 
-    // PC mux
-    logic [31:0] PCPlus4F, PCTargetE, PCF_new;
-    logic PCSrcE;
+    // pipeline interfaces
+    ifid_if  ifid;
+    idex_if  idex;
+    exmem_if exmem;
+    memwb_if memwb;
 
+    logic [31:0] PCF_new;
+    logic [31:0] PCPlus4F;
+    logic        PCSrcE;
+    logic [31:0] PCTargetE;
+
+    // PC mux
     mux2 pcmux(
 
         .d0 (PCPlus4F),
@@ -41,203 +49,84 @@ module datapath (
 
     );
 
-    // IF stage
+    if_stage IF (
 
-    logic [31:0] RD_instr;
+        .clk(clk),
+        .reset(reset),
+        .en(~StallF),
+        .PCF_new(PCF_new),
+        .outputs(ifid.wr)
 
-    if_stage if_stage (
+    );
+
+    id_stage ID (
+
+        .clk(clk),
+        .reset(reset | FlushD),
+        .en(~StallD),
+
+        .inputs(ifid.rd),
         
-        .clk          (clk),
-        .en           (~StallF),
-        .reset        (reset),
-        .PCF_new      (PCF_new),
-        .PCF          (PCF)
-        .RD_instr     (RD_instr),
-        .PCPlus4F     (PCPlus4F)
+        .RegWriteW(RegWriteW),
+        .RdW(RdW),
+        .ResultW(ResultW),
+        
+        .outputs(idex.wr)
 
     );
 
-    // ID stage
+    assign Rs1D = idex.data.Rs1;
+    assign Rs2D = idex.data.Rs2;
 
-    logic           RegWriteW;
-    logic [31:0]    ResultW;
+    ex_stage EX (
 
-    logic           RegWriteD;
-    logic [1:0]     ResultSrcD;
-    logic           MemWriteD;
-    logic           JumpD;
-    logic           BranchD;
-    logic [2:0]     ALUControlD;
-    logic           ALUSrcD;
-    logic           SrcAsrcD;
-    logic [2:0]     funct3D;
-    logic [1:0]     ImmSrcD;
-    logic           jumpRegD;
+        .ResultW(ResultW),
+        .ALUResultM(ALUResultM),
+        .ForwardAE(ForwardAE),
+        .ForwardBE(ForwardBE),
 
-    logic [31:0] RD1D, RD2D, PCD, ImmExtD, PCPlus4D;
-    logic [4:0] RdD;
+        .PCSrcE(PCSrcE),
+        .PCTargetE(PCTargetE),
 
-    id_stage id_stage (
-
-        .clk        (clk),
-        .reset      (FlushD | reset),
-        .en         (~StallD),
-
-        .InstrF     (RD_instr),
-        .PCF        (PCF),
-        .PCPlus4F   (PCPlus4F),
-
-        .RegWriteW  (RegWriteW),
-        .RdW        (RdW),
-        .ResultW    (ResultW),
-
-
-        .RegWriteD  (RegWriteD),
-        .ResultSrcD (ResultSrcD),
-        .MemWriteD  (MemWriteD),
-        .JumpD      (JumpD),
-        .BranchD    (BranchD),
-        .ALUControlD(ALUControlD),
-        .ALUSrcD    (ALUSrcD),
-        .SrcAsrcD   (SrcAsrcD),
-        .funct3D    (funct3D),
-        .jumpRegD   (jumpRegD),
-
-        .RD1D       (RD1D),
-        .RD2D       (RD2D),
-        .PCD        (PCD),
-        .Rs1D       (Rs1D),
-        .Rs2D       (Rs2D),
-        .RdD        (RdD),
-        .ImmExtD    (ImmExtD),
-        .PCPlus4D   (PCPlus4D)
+        .inputs(idex.rd),
+        .outputs(exmem.wr)
 
     );
 
-    // EX stage
+    assign Rs1E = idex.data.Rs1;
+    assign Rs2E = idex.data.Rs2;
+    assign RdE = idex.data.Rd;
 
-    logic RegWriteE;
-    logic ResultSrcE;
-    logic MemWriteE;
-    logic [2:0] funct3E;
-    logic jumpRegE;
+    assign ResultSrcE_zero = idex.ctrl.ResultSrc[0];
 
-    logic [31:0] PCPlus4E, ALUResultE, WriteDataE, ImmExtE;
+    mem_stage MEM (
 
-    logic [31:0] ResultW, ALUResultM;
-
-    logic [4:0] RdE;
-
-    ex_stage ex_stage(
-
-        .clk            (clk),
-        .reset          (FlushE | reset),
-
-        // control IO
-        .RegWriteD      (RegWriteD),
-        .ResultSrcD     (ResultSrcD),
-        .MemWriteD      (MemWriteD),
-        .JumpD          (JumpD),
-        .BranchD        (BranchD),
-        .ALUControlD    (ALUControlD),
-        .ALUSrcD        (ALUSrcD),
-        .SrcAsrcD       (SrcAsrcD),
-        .funct3D        (funct3),
-        .jumpRegD       (jumpRegD),
-
-        .RegWriteE      (RegWriteE),
-        .ResultSrcE     (ResultSrcE),
-        .MemWriteE      (MemWriteE),
-        .funct3E        (funct3E),
-        .jumpRegE       (jumpRegE),
-
-        // datapath IO
-        .RD1D           (RD1D),
-        .RD2D           (RD2D),
-        .PCD            (PCD),
-        .Rs1D           (Rs1D),
-        .Rs2D           (Rs2D),
-        .RdD            (RdD),
-        .ImmExtD        (ImmExtD),
-        .PCPlus4D       (PCPlus4D),
-
-        .PCPlus4E       (PCPlus4E),
-        .ALUResultE     (ALUResultE),
-        .WriteDataE     (WriteDataE),
-        .Rs1E           (Rs1E),
-        .Rs2E           (Rs2E),
-        .RdE            (RdE),
-        .ImmExtE        (ImmExtE),
-
-        // others
-        .ResultW        (ResultW),
-        .ALUResultM     (ALUResultM),
-        .ForwardAE      (ForwardAE),
-        .ForwardBE      (ForwardBE),
-        .PCSrcE         (PCSrcE) // output
+        .clk(clk),
+        .reset(reset),
+        .inputs(exmem.rd),
+        .outputs(memwb.wr)
 
     );
 
-    assign ResultSrcE_zero = ResultSrcE[0];
+    assign RdM = exmem.data.Rd;
+    assign RegWriteM = exmem.ctrl.RegWrite;
 
-    // MEM stage
+    logic [31:0] ResultW;
 
-    logic RegWriteM;
-    logic [1:0] ResultSrcM;
-    logic [31:0] load_data, PCPlus4M;
+    wb_stage WB (
 
-    mem_stage mem_stage (
+        .inputs(memwb.rd),
 
-        .clk        (clk),
-        .reset      (reset),
-
-        // control IO
-        .RegWriteE  (RegWriteE),
-        .ResultSrcE (ResultSrcE),
-        .MemWriteE  (MemWriteE),
-        .funct3E    (funct3E),
-
-        .RegWriteM  (RegWriteM),
-        .ResultSrcM (ResultSrcM),
-
-        // datapath IO
-        .ALUResultE (ALUResultE),
-        .WriteDataE (WriteDataE),
-        .RdE        (RdE),
-        .ImmExtE    (ImmExtE),
-        .PCPlus4E   (PCPlus4E),
-
-        .ALUResultM (ALUResultM),
-        .load_data  (load_data),
-        .RdM        (RdM),
-        .ImmExtM    (ImmExtM),
-        .PCPlus4M   (PCPlus4M)
+        .RegWriteW(RegWriteW),
+        .RdW(RdW),
+        .ResultW(ResultW)
 
     );
 
-    // WB stage
+    assign RdW = memwb.data.Rd;
+    assign RegWriteW = memwb.ctrl.RegWrite;
 
-    wb_stage wb_stage (
+    assign PCF_new = PCSrcE ? PCTargetE : PCPlus4F;
 
-        .clk        (clk),
-        .reset      (reset),
-
-        // control IO
-        .RegWriteM  (RegWriteM),
-        .ResultSrcM (ResultSrcM),
-
-        .RegWriteW  (RegWriteW),
-
-        // datapath IO
-        .ALUResultM (ALUResultM),
-        .load_data  (load_data),
-        .RdM        (RdM),
-        .ImmExtM    (ImmExtM),
-        .PCPlus4M   (PCPlus4M),
-
-        .RdW        (RdW),
-        .ResultW    (ResultW)
-
-    );
 
 endmodule
