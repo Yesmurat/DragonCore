@@ -45,36 +45,36 @@ module datapath (
     // PC mux
     mux2 pcmux(
 
-        .d0 (PCPlus4F),
-        .d1 (PCTargetE),
-        .s  (PCSrcE),
-        .y  (PCF_new)
+        .d0     (PCPlus4F),
+        .d1     (PCTargetE),
+        .s      (PCSrcE),
+        .y      (PCF_new)
 
     );
 
     if_stage IF (
 
-        .clk(clk),
-        .reset(reset),
-        .en(~StallF),
-        .PCF_new(PCF_new),
-        .outputs(ifid.wr)
+        .clk        (clk),
+        .reset      (reset),
+        .en         (~StallF),
+        .PCF_new    (PCF_new),
+        .outputs    (ifid.wr)
 
     );
 
     id_stage ID (
 
-        .clk(clk),
-        .reset(reset | FlushD),
-        .en(~StallD),
+        .clk            (clk),
+        .reset          (reset | FlushD),
+        .en             (~StallD),
 
-        .inputs(ifid.rd),
+        .inputs         (ifid.rd),
         
-        .RegWriteW(RegWriteW),
-        .RdW(RdW),
-        .ResultW(ResultW),
+        .RegWriteW      (RegWriteW),
+        .RdW            (RdW),
+        .ResultW        (ResultW),
         
-        .outputs(idex.wr)
+        .outputs        (idex.wr)
 
     );
 
@@ -83,16 +83,16 @@ module datapath (
 
     ex_stage EX (
 
-        .ResultW(ResultW),
-        .ALUResultM(ALUResultM),
-        .ForwardAE(ForwardAE),
-        .ForwardBE(ForwardBE),
+        .ResultW        (ResultW),
+        .ALUResultM     (ALUResultM),
+        .ForwardAE      (ForwardAE),
+        .ForwardBE      (ForwardBE),
 
-        .PCSrcE(PCSrcE),
-        .PCTargetE(PCTargetE),
+        .PCSrcE         (PCSrcE),
+        .PCTargetE      (PCTargetE),
 
-        .inputs(idex.rd),
-        .outputs(exmem.wr)
+        .inputs         (idex.rd),
+        .outputs        (exmem.wr)
 
     );
 
@@ -104,10 +104,10 @@ module datapath (
 
     mem_stage MEM (
 
-        .clk(clk),
-        .reset(reset),
-        .inputs(exmem.rd),
-        .outputs(memwb.wr)
+        .clk        (clk),
+        .reset      (reset),
+        .inputs     (exmem.rd),
+        .outputs    (memwb.wr)
 
     );
 
@@ -117,11 +117,11 @@ module datapath (
 
     wb_stage WB (
 
-        .inputs(memwb.rd),
+        .inputs         (memwb.rd),
 
-        .RegWriteW(RegWriteW),
-        .RdW(RdW),
-        .ResultW(ResultW)
+        .RegWriteW      (RegWriteW),
+        .RdW            (RdW),
+        .ResultW        (ResultW)
 
     );
 

@@ -15,7 +15,7 @@ module id_stage (
     logic [31:0] Instr;
     logic [31:0] PC;
     logic [31:0] PCPlus4;
-    logic [1:0] ImmSrc;
+    logic [2:0] ImmSrc;
 
     assign Instr = inputs.data.instr;
 
@@ -70,5 +70,7 @@ module id_stage (
     assign outputs.data.Rs1 = Instr[19:15];
     assign outputs.data.Rs2 = Instr[24:20];
     assign outputs.data.Rd =  Instr[11:7];
+
+    assign outputs.ctrl.funct3 = Instr[14:12];
 
 endmodule

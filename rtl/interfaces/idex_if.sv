@@ -7,7 +7,7 @@ interface idex_if;
         logic       MemWrite;
         logic       Jump;
         logic       Branch;
-        logic [2:0] ALUControl;
+        logic [3:0] ALUControl;
         logic       ALUSrc;
         logic       SrcAsrc;
         logic [2:0] funct3;
