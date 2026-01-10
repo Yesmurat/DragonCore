@@ -37,6 +37,7 @@ module datapath (
 
     logic [31:0] PCF_new;
     logic [31:0] PCPlus4F;
+    logic [31:0] PCF;
     logic [31:0] PCTargetE;
 
     logic [31:0] ResultW;
@@ -52,13 +53,21 @@ module datapath (
 
     );
 
-    if_stage IF (
+    IF if_reg (
 
         .clk        (clk),
-        .reset      (reset),
         .en         (~StallF),
-        .PCF_new    (PCF_new),
-        .outputs    (ifid)
+        .reset      (reset),
+
+        .PC_new     (PCF_new),
+        .PC         (PCF)
+
+    );
+
+    if_stage IF (
+
+        .PC         (PCF),
+        .outputs    ()
 
     );
 
@@ -66,12 +75,12 @@ module datapath (
 
     ID id_reg (
 
-        .clk(clk),
-        .en(~StallD),
-        .reset(reset | FlushD),
+        .clk        (clk),
+        .en         (~StallD),
+        .reset      (reset | FlushD),
 
-        .inputs(),
-        .outputs()
+        .inputs     (),
+        .outputs    ()
 
     );
 
@@ -85,13 +94,15 @@ module datapath (
         .RdW            (RdW),
         .ResultW        (ResultW),
         
-        .inputs         (ifid),
-        .outputs        (idex)
+        .inputs         (),
+        .outputs        ()
 
     );
 
     assign Rs1D = idex.data.Rs1;
     assign Rs2D = idex.data.Rs2;
+
+    EX ex_reg ();
 
     ex_stage EX (
 
@@ -106,8 +117,8 @@ module datapath (
         .Rs1E           (Rs1E),
         .Rs2E           (Rs2E),
 
-        .inputs         (idex),
-        .outputs        (exmem)
+        .inputs         (),
+        .outputs        ()
 
     );
 
@@ -115,11 +126,13 @@ module datapath (
     assign RdE = idex.data.Rd;
     assign ResultSrcE_zero = idex.ctrl.ResultSrc[0];
 
+    MEM mem_reg ();
+
     mem_stage MEM (
 
         .clk        (clk),
-        .inputs     (exmem),
-        .outputs    (memwb)
+        .inputs     (),
+        .outputs    ()
 
     );
 
@@ -127,9 +140,11 @@ module datapath (
     assign RegWriteM = memwb.ctrl.RegWrite;
     assign ALUResultM = memwb.data.ALUResult;
 
+    WB wb_reg ();
+
     wb_stage WB (
 
-        .inputs         (memwb.rd),
+        .inputs         (),
 
         .RegWriteW      (RegWriteW),
         .RdW            (RdW),
