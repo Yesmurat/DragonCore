@@ -22,13 +22,13 @@ module mem_stage (
 
     dmem data_memory(
 
-        .clk        (clk),
-        .we         (inputs.ctrl.MemWrite),
-        .byteEnable (byteEnable),
-        .a          (inputs.data.ALUResult),
-        .wd         (inputs.data.WriteData), // WriteDataM
+        .clk            (clk),
+        .we             (inputs.ctrl.MemWrite),
+        .byteEnable     (byteEnable),
+        .address        (inputs.data.ALUResult),
+        .wd             (inputs.data.WriteData), // WriteDataM
 
-        .rd         (RD_data)
+        .rd             (RD_data)
 
     );
 

@@ -23,8 +23,8 @@ module if_stage (
 
     imem instr_mem(
 
-        .a  (outputs.data.PC),
-        .rd (outputs.data.instr)
+        .address    (outputs.data.PC),
+        .rd         (outputs.data.instr)
 
     );
 

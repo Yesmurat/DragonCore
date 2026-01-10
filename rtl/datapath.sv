@@ -64,6 +64,17 @@ module datapath (
 
     assign PCPlus4F = ifid.data.PCPlus4;
 
+    ID id_reg (
+
+        .clk(clk),
+        .en(~StallD),
+        .reset(reset | FlushD),
+
+        .inputs(),
+        .outputs()
+
+    );
+
     id_stage ID (
 
         .clk            (clk),
@@ -112,8 +123,8 @@ module datapath (
 
     );
 
-    assign RdM = exmem.data.Rd;
-    assign RegWriteM = exmem.ctrl.RegWrite;
+    assign RdM = memwb.data.Rd;
+    assign RegWriteM = memwb.ctrl.RegWrite;
     assign ALUResultM = memwb.data.ALUResult;
 
     wb_stage WB (

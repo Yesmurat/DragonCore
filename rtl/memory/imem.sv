@@ -3,7 +3,7 @@
 
 module imem (
     
-        input logic  [31:0] a,
+        input logic  [31:0] address,
         output logic [31:0] rd
 
     );
@@ -12,6 +12,6 @@ module imem (
     
     initial $readmemh("./imem.mem", ROM);
 
-    assign rd = ROM[ a[31:2] ];
+    assign rd = ROM[ address[31:2] ];
 
 endmodule // Instruction memory
