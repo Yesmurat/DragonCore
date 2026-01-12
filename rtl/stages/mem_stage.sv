@@ -1,14 +1,15 @@
 import pipeline_pkg::exmem_t;
 import pipeline_pkg::memwb_t;
 
-module mem_stage (
+module mem_stage
+    #( parameter XLEN = 32 ) (
     
         input logic clk,
 
         input exmem_t inputs,
         output memwb_t outputs,
 
-        output logic [31:0] ALUResultM,
+        output logic [XLEN-1:0] ALUResultM,
 
         // outputs to hazard unit
         output logic [4:0] RdM,
