@@ -21,15 +21,16 @@ module wdext #(
 
                 3'b000: begin // sb
 
-                    case (byteAddrM)
+                    // case (byteAddrM)
 
-                        // 2'b00: byteEnable = 4'b0001;
-                        // 2'b01: byteEnable = 4'b0010;
-                        // 2'b10: byteEnable = 4'b0100;
-                        // 2'b11: byteEnable = 4'b1000;
-                        byteEnable = 1 << byteAddrM;
+                    //     2'b00: byteEnable = 4'b0001;
+                    //     2'b01: byteEnable = 4'b0010;
+                    //     2'b10: byteEnable = 4'b0100;
+                    //     2'b11: byteEnable = 4'b1000;
 
-                    endcase
+                    // endcase
+
+                    byteEnable = 1 << byteAddrM;
 
                 end
 

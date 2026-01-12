@@ -8,8 +8,8 @@ module if_stage #(
     ) (
     
         input logic  [XLEN-1:0] PC,
+
         output logic [XLEN-1:0] PCPlus4F,
-        
         output ifid_t outputs
         
     );
@@ -22,12 +22,12 @@ module if_stage #(
         
     end
 
-    (* dont_touch = "true" *) #(
+    (* dont_touch = "true" *) imem #(
 
         .XLEN(XLEN),
         .ADDR_WIDTH(ADDR_WIDTH)
 
-    ) imem instr_mem(
+    ) instr_mem(
 
         .address    ( PC[XLEN-1:2] ),
         .rd         (outputs.instr)

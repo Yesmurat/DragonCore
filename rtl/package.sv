@@ -1,9 +1,11 @@
-package pipeline_pkg #( parameter XLEN = 32 );
+package pipeline_pkg;
+
+    parameter XLEN = 32;
     
     // IFID
     typedef struct packed {
 
-        logic [31:0] instShr;
+        logic [31:0] instr;
         logic [XLEN-1:0] PC;
         logic [XLEN-1:0] PCPlus4;
 
