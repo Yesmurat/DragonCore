@@ -1,11 +1,13 @@
 (* dont_touch = "true" *)
 
+import control_pkg::*;
+
 `timescale 1ns/1ps
 
 module aludec (
     
     input logic         opb5, // for sub detection
-    input logic  [2:0]  funct3, // instr[14:12]
+    input logic  [2:0]  funct3,
     input logic         funct7b5, // instr[30] for SUB/SRA
     input logic  [1:0]  ALUOp,
     output logic [3:0]  ALUControl
@@ -14,18 +16,6 @@ module aludec (
 
     logic RtypeSub;
     assign RtypeSub = funct7b5 & opb5; // TRUE for R-type SUB
-
-    localparam [3:0]
-        ADD = 4'b0000,
-        SUB = 4'b0001,
-        AND = 4'b0010,
-        OR = 4'b0011,
-        XOR = 4'b0100,
-        SLT = 4'b0101,
-        SLTU = 4'b0110,
-        SLL = 4'b0111,
-        SRL = 4'b1000,
-        SRA = 4'b1001;
 
     always_comb begin
 

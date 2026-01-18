@@ -6,7 +6,7 @@ module loadext #(
     
 ) (
 
-    input logic  [2:0]  LoadTypeM, // funct3
+    input logic  [2:0]  funct3,
     input logic  [XLEN-1:0] RD_data,
     input logic  [ $clog2(XLEN/8)-1 : 0 ]  byteAddrM,
     
@@ -28,17 +28,21 @@ module loadext #(
 
         hword_value = RD_data[ {byteAddrM[$clog2(XLEN/8)-1:1], 1'b0} * BYTE_W +: HWORD_W ];
 
-        unique case (LoadTypeM)
+        unique case (funct3)
 
             3'b000: load_data = $signed(byte_value); // load byte
 
-            3'b100: load_data = $unsigned(byte_value); // load byte (unsigned)
+            3'b100: load_data = $unsigned(byte_value); // load byte unsigned
 
-            3'b001: load_data = $signed(hword_value); // load half word
+            3'b001: load_data = $signed(hword_value); // load half
 
-            3'b101: load_data = $unsigned(hword_value); // load half word (unsigned)
+            3'b101: load_data = $unsigned(hword_value); // load half unsigned
 
-            3'b010: load_data = RD_data; // load word
+            3'b010: load_data = RD_data[31:0]; // load word
+
+            3'b011: load_data = RD_data; // load double word
+
+            3'b011: load_data = $unsigned(RD_data); // load word unsigned
 
             default: load_data = '0;
 

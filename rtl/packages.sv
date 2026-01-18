@@ -119,7 +119,6 @@ package control_pkg;
         logic       SrcAsrcD;
         logic       jumpRegD;
         
-    
     } control_signals;
 
     typedef enum logic {
@@ -135,5 +134,18 @@ package control_pkg;
         jalr   = 7'b1100111
 
     } opcodes;
+
+    localparam [3:0]
+
+        ADD = 4'b0000,
+        SUB = 4'b0001,
+        AND = 4'b0010,
+        OR = 4'b0011,
+        XOR = 4'b0100,
+        SLT = 4'b0101,
+        SLTU = 4'b0110,
+        SLL = 4'b0111,
+        SRL = 4'b1000,
+        SRA = 4'b1001;
 
 endpackage
