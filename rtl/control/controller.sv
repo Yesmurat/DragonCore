@@ -17,7 +17,8 @@ module controller (
     output logic       ALUSrcD,
     output logic [2:0] ImmSrcD,
     output logic       SrcAsrcD,
-    output logic       jumpRegD
+    output logic       jumpRegD,
+    output logic       is_word_op
                    
     );
 
@@ -28,10 +29,12 @@ module controller (
     (* dont_touch = "true" *) maindec md(
 
         .opcode     (opcode),
-        .funct3     (funct3)
+        .funct3     (funct3),
         .ctrl       (ctrls)
 
     );
+
+    assign ALUOp = ctrls.ALUOp;
 
     (* dont_touch = "true" *) aludec ad(
 
@@ -48,9 +51,10 @@ module controller (
     assign MemWriteD = ctrls.MemWriteD;
     assign JumpD = ctrls.JumpD;
     assign BranchD = ctrls.BranchD;
-    assign ALUControlD = ctrls.ALUControlD;
     assign ImmSrcD = ctrls.ImmSrcD;
     assign SrcAsrcD = ctrls.SrcAsrcD;
     assign jumpRegD = ctrls.jumpRegD;
+    assign ALUSrcD = ctrls.ALUSrcD;
+    assign is_word_op = ctrls.is_word_op;
     
 endmodule

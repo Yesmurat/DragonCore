@@ -43,7 +43,8 @@ module id_stage #(
         .ALUSrcD        ( outputs.ALUSrc     ),
         .ImmSrcD        ( ImmSrc             ),
         .SrcAsrcD       ( outputs.SrcAsrc    ),
-        .jumpRegD       ( outputs.jumpReg    )
+        .jumpRegD       ( outputs.jumpReg    ),
+        .is_word_op     ( outputs.is_word_op )
 
     );
 
@@ -68,7 +69,7 @@ module id_stage #(
     extend #(.XLEN(XLEN)) immediate_extend(
 
         .instr_31_7     ( Instr[31:7]         ),
-        .immsrc         ( ImmSrc              ),
+        .funct3         ( ImmSrc              ),
 
         .immext         ( outputs.ImmExt      )
 

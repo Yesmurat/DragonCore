@@ -4,7 +4,7 @@ module extend
     #( parameter XLEN = 32 ) (
 
     input  logic [24:0] instr_31_7,
-    input  logic [2:0]  immsrc,
+    input  logic [2:0]  funct3,
 
     output logic [XLEN-1:0] immext
     
@@ -12,7 +12,7 @@ module extend
 
     always_comb begin
 
-        unique case (immsrc)
+        unique case (funct3)
 
             // I-type
             3'b000: immext = { { (XLEN-12) { instr_31_7[24] } }, instr_31_7[24:13] };

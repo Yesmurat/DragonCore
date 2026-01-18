@@ -119,12 +119,10 @@ package control_pkg;
         logic       SrcAsrcD;
         logic       jumpRegD;
         logic       is_word_op;
-        
+
     } control_signals;
-
-    typedef enum logic {
-
-        // rv32
+        
+    localparam [6:0]
         load   = 7'b0000011, // same for rv32 & rv64
         store  = 7'b0100011, // same for rv32 & rv64
         r_type  = 7'b0110011,
@@ -137,11 +135,7 @@ package control_pkg;
 
         // rv64
         i_type64 = 7'b0011011,
-        sd       = 7'b0100011,
-        r_type64 = 7'b0111011
-
-
-    } opcodes;
+        r_type64 = 7'b0111011;
 
     localparam [3:0]
 

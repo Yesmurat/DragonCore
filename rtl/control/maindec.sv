@@ -13,8 +13,6 @@ module maindec (
             
     );
 
-    opcodes opcode_type;
-
     always_comb begin
 
         ctrl = '0;
@@ -135,6 +133,8 @@ module maindec (
                 ctrl.is_word_op = 1'b1;
                 
             end
+
+            default: ctrl = '0;
 
         endcase
         
