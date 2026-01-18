@@ -3,18 +3,19 @@
 module testbench;
 
     localparam CLK_PERIOD = 10;
+    localparam XLEN = 64;
 
     logic clk;
     logic reset;
-    logic [4:0] Rs1, Rs2;
+    logic [4:0] Rs1D, Rs2D;
 
     riscv dut (
 
-        .clk(clk),
-        .reset(reset),
+        .clk            (clk),
+        .reset          (reset),
         
-        .Rs1(Rs1),
-        .Rs2(Rs2)
+        .Rs1D           (Rs1D),
+        .Rs2D           (Rs2D)
 
     );
 
