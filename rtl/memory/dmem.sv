@@ -3,7 +3,7 @@
 module dmem #(
 
         parameter XLEN = 32,
-        parameter ADDR_WIDTH = 8 // 256 words
+        parameter MEMORY_CAPACITY = 8 // 256 words
 
         ) (
     
@@ -11,16 +11,16 @@ module dmem #(
         input logic                     we,
         input logic  [XLEN/8-1:0]       byteEnable,
         
-        input logic  [ADDR_WIDTH-1:0]   address,
+        input logic  [MEMORY_CAPACITY-1:0]   address,
         input logic  [XLEN-1:0]         wd, // WriteDataM
 
         output logic [XLEN-1:0]         rd
 
     );
 
-    logic [XLEN-1:0] Dmem[ 2**ADDR_WIDTH-1 : 0 ];
+    logic [XLEN-1:0] RAM [ MEMORY_CAPACITY - 1 : 0 ];
     
-    initial $readmemh("./dmem.mem", Dmem);
+    initial $readmemh("./dmem.mem", RAM);
 
     always_ff @(posedge clk) begin
 
@@ -30,7 +30,7 @@ module dmem #(
             for (i = 0; i < XLEN/8; i = i + 1) begin
 
                 if (byteEnable[i])
-                    Dmem[address][8*i +: 8] <= wd[8*i +: 8];
+                    RAM[address][8*i +: 8] <= wd[8*i +: 8];
 
             end
 
@@ -38,7 +38,7 @@ module dmem #(
 
         else begin
 
-            rd <= Dmem[ address ];
+            rd <= RAM[ address ];
             
         end
 

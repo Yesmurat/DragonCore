@@ -2,7 +2,6 @@
 .text
 
 _boot:
-	# Immediate arithmetic
     addi x1, x0, 10        # x1 = 10
     addi x2, x0, -5        # x2 = -5
     addi x3, x1, 20        # x3 = 30
@@ -37,17 +36,27 @@ _boot:
     # Branches
     beq  x14, x16, equal32
     addi x17, x0, 0 # should be skipped if equal
-
+    j    end32          # jump to end if not equal
+    
 equal32:
-    bne  x14, x16, end32
+    la x6, variable
+    addi x6, x6, 4
+
+    bne  x14, x16, skip_set
     addi x17, x0, 1 # executed if equal
 
+skip_set:
     # Jump
     jal  x18, jump_target32
     addi x19, x0, 0 # skipped
 
 jump_target32:
-    jalr x0, 0(x18) # return
+    jalr x0, 0(x18) # return (comes back here)
+    j    end32      # jump to end
 
 end32:
     nop
+
+.data
+variable:
+    .word 0xdeadbeef

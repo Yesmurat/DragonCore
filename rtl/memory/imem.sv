@@ -5,7 +5,7 @@
 module imem #(
 
         parameter XLEN       = 32,
-        parameter ADDR_WIDTH = 8 // 256 instructions
+        parameter MEMORY_CAPACITY = 1024 // 256 instructions
 
     )
     
@@ -17,16 +17,16 @@ module imem #(
         
     );
     
-    logic [31:0] Imem[ 2**ADDR_WIDTH-1 : 0 ];
+    logic [31:0] ROM[ MEMORY_CAPACITY - 1 : 0 ];
     
-    initial $readmemh("./imem.mem", Imem);
+    initial $readmemh("./imem.mem", ROM);
 
     // always_ff @(posedge clk) begin
 
-    //     rd <= Imem[address];
+    //     rd <= ROM[address];
 
     // end
 
-    assign rd = Imem[address];
+    assign rd = ROM[address];
 
 endmodule // Instruction memory
