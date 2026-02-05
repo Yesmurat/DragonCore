@@ -44,12 +44,11 @@ module maindec (
 
                 ctrl.is_word_op = (funct3 == 3'b110) ? 1 : 0; // lwu
                 
-            end // loads (32/64)
+            end // loads (I-type) (32/64)
 
             store: begin
             
                 // 1'b0, 3'b001, 1'b1, 1'b1, 2'b00, 1'b0, 2'b00, 1'b0, 1'b1, 1'b1
-                ctrl.ImmSrcD   = 3'b001;
                 ctrl.ALUSrcD   = 1'b1;
                 ctrl.MemWriteD = 1'b1;
                 ctrl.jumpRegD  = 1'b1;
@@ -78,55 +77,51 @@ module maindec (
             branch: begin
 
                 // 1'b0, 3'b010, 1'b0, 1'b0, 2'b00, 1'b1, 2'b01, 1'b0, 1'b1, 1'b1
-                ctrl.ImmSrcD  = 3'b010;
                 ctrl.BranchD  = 1'b1;
                 ctrl.ALUOp    = 2'b01;
                 ctrl.jumpRegD = 1'b1;
                 
             end // B-type
 
-            lui: begin // lui
+            lui: begin
 
                 // 1'b1, 3'b100, 1'b1, 1'b0, 2'b11, 1'b0, 2'b00, 1'b0, 1'b0, 1'b1
                 ctrl.RegWriteD  = 1'b1;
-                ctrl.ImmSrcD    = 3'b100;
                 ctrl.ALUSrcD    = 1'b1;
                 ctrl.ResultSrcD = 2'b11;
                 ctrl.jumpRegD   = 1'b1;
                 
-            end // U-type
+            end // lui (U-type)
 
             auipc: begin
 
                 // 1'b1, 3'b100, 1'b1, 1'b0, 2'b00, 1'b0, 2'b00, 1'b0, 1'b0, 1'b1
                 ctrl.RegWriteD = 1'b1;
-                ctrl.ImmSrcD    = 3'b100;
                 ctrl.ALUSrcD    = 1'b1;
                 ctrl.SrcAsrcD   = 1'b1;
                 ctrl.jumpRegD   = 1'b1;
                 
-            end // auipc
+            end // auipc (U-type)
 
-            jal: begin // jal
+            jal: begin
 
                 // 1'b1, 3'b011, 1'b0, 1'b0, 2'b10, 1'b0, 2'b00, 1'b1, 1'b1, 1'b1
                 ctrl.RegWriteD  = 1'b1;
-                ctrl.ImmSrcD    = 3'b011;
                 ctrl.ResultSrcD = 2'b10;
                 ctrl.JumpD      = 1'b1;
                 ctrl.SrcAsrcD   = 1'b1;
                 ctrl.jumpRegD   = 1'b1;
                 
-            end
+            end // jal (J-type)
 
-            jalr: begin // jalr
+            jalr: begin
 
                 // 1'b1, 3'b000, 1'b0, 1'b0, 2'b10, 1'b0, 2'b00, 1'b1, 1'b1, 1'b0
                 ctrl.RegWriteD  = 1'b1;
                 ctrl.ResultSrcD = 2'b10;
                 ctrl.JumpD      = 1'b1;
                 
-            end
+            end // jalr (I-type)
 
             i_type64: begin
 
