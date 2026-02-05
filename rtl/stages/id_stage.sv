@@ -25,16 +25,15 @@ module id_stage #(
 );
 
     logic [31:0] Instr;
-    logic [2:0] ImmSrc;
 
     assign Instr = inputs.instr;
 
     (* dont_touch = "true" *)
     controller control_unit(
 
-        .opcode         ( Instr[6:0]              ),
-        .funct3         ( Instr[14:12]            ),
-        .funct7b5       ( Instr[30]               ),
+        .opcode         ( Instr[6:0]         ),
+        .funct3         ( Instr[14:12]       ),
+        .funct7b5       ( Instr[30]          ),
 
         .RegWriteD      ( outputs.RegWrite   ),
         .ResultSrcD     ( outputs.ResultSrc  ),
@@ -43,7 +42,6 @@ module id_stage #(
         .BranchD        ( outputs.Branch     ),
         .ALUControlD    ( outputs.ALUControl ),
         .ALUSrcD        ( outputs.ALUSrc     ),
-        .ImmSrcD        ( ImmSrc             ),
         .SrcAsrcD       ( outputs.SrcAsrc    ),
         .jumpRegD       ( outputs.jumpReg    ),
         .is_word_op     ( outputs.is_word_op )
@@ -70,9 +68,7 @@ module id_stage #(
     (* dont_touch = "true" *)
     extend #(.XLEN(XLEN)) immediate_extend(
 
-        .instr_31_7     ( Instr[31:7]         ),
-        .funct3         ( ImmSrc              ),
-
+        .instr          ( Instr               ),
         .immext         ( outputs.ImmExt      )
 
     );
