@@ -106,25 +106,6 @@ package hazard_io;
 
 endpackage
 
-package control_pkg;
-
-    typedef struct packed {
-
-        logic [1:0] ResultSrcD;
-        logic       MemWriteD;
-        logic       BranchD;
-        logic       ALUSrcD;
-        logic       RegWriteD;
-        logic       JumpD;
-        logic [1:0] ALUOp;
-        logic       SrcAsrcD;
-        logic       jumpRegD;
-        logic       is_word_op;
-
-    } control_signals;
-
-endpackage
-
 package alu_pkg;
     
     localparam ADD  = 4'b0000;
