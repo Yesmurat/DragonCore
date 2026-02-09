@@ -29,7 +29,8 @@ module alu
             OR: alu_raw = d0 | d1;
             XOR: alu_raw = d0 ^ d1;
 
-            SLT: alu_raw = ( $signed(d0) < $signed(d1) ) ? { { (XLEN-1){0} }, 1'b1 } : { XLEN{1'b0} };
+            SLT: alu_raw = ( $signed(d0) < $signed(d1) ) ? { { (XLEN-1){1'b0} }, 1'b1 } : { XLEN{1'b0} };
+            
             SLTU: alu_raw = (d0 < d1) ? '1 : '0;
 
             SLL: alu_raw = d0 << (
