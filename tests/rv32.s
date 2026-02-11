@@ -11,17 +11,17 @@ _boot:
     sub  x5, x4, x1        # x5 = 40 - 10 = 30 (passed)
 
     # Logical ops
-    and  x6, x4, x3        # x6 = 40 & 30 (passed)
-    or   x7, x4, x3        # x7 = 40 | 30 (passed)
-    xor  x8, x4, x3        # x8 = 40 ^ 30 (passed)
+    and  x6, x4, x3        # x6 = 40 & 30 = 8 (passed)
+    or   x7, x4, x3        # x7 = 40 | 30 = 62 (passed)
+    xor  x8, x4, x3        # x8 = 40 ^ 30 = 54 (passed)
 
     # Shifts (lower 5 bits used for RV32)
     slli x9,  x1, 2        # x9 = 10 << 2 = 40 (passed)
     srli x10, x9, 1        # x10 = 40 >> 1 = 20 (logical) (passed)
-    srai x11, x2, 1        # x11 = -5 >> 1 (arithmetic) (fail: rdW = 11, ResultW = 7ffffffd)
+    srai x11, x2, 1        # x11 = -5 >> 1 = 3 (arithmetic) (passed)
 
     # Comparisons
-    slt  x12, x2, x1       # x12 = 1 (-5 < 10) (fail: rdW = 12, ResultW = ffffffff)
+    slt  x12, x2, x1       # x12 = 1 (-5 < 10) (passed)
     sltu x13, x2, x1       # unsigned compare (x13 = 0) (passed)
 
     # Load upper immediate
