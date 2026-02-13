@@ -10,17 +10,17 @@ The core features a parameterizable design and implements the RV32I base integer
 ## Core Architecture
 ![Architecture](./architecture.svg)
 
-Core follows the design of 5-stage pipelined processor (Figure 7.61) from "Digital Design & Computer Architecture: RISC-V Edition" with additional custom logic, control, and blocks (load extend, write extend, branch unit, etc.) to cover the whole 32-bit integer instruction set.
+Architecture follows the design of 5-stage pipelined processor from "Digital Design & Computer Architecture: RISC-V Edition" with additional custom logic, control, and blocks (load extend, write extend, branch unit, etc.) to cover the whole 32-bit integer instruction set.
 
-The design follows classic 5-stage in-order pipeline: IF -> ID -> EX -> MEM -> WB.
+The design follows a classic 5-stage in-order pipeline: IF -> ID -> EX -> MEM -> WB.
 Hazards are handled by Hazard Unit, which receives source & destination registers from ID, EX, MEM, and WB stages. Hazard Unit solves data hazards with forwarding using `ForwardAE` and `ForwardBE` signals to control mux selection in EX stage.
-Flushing is used for branch & jump instructions, and stalling is used to prevent load-use hazards.
+Flushing is used for branch & jump instructions, while stalling is used to prevent load-use hazards.
 
-Refer to microarchitecture for more detailed view of the core ([microarchitecture](./microarchitecture.svg))
+Detailed design choices are available in the [microarchitecture diagram](./microarchitecture.svg).
 
 ---
 
-## Features
+## Design Features
 
 - RV32 Integer Instruction Set support
 - Parameterizible data width and key module parameters
@@ -33,7 +33,7 @@ Refer to microarchitecture for more detailed view of the core ([microarchitectur
 ```
 Dragon/
 ├── rtl/              # SystemVerilog source files
-├── tests/            # Assembly test programs with linker script
+├── tests/            # Assembly test programs
 ├── sim/              # Simulation scripts
 |── tb/               # Testbench
 ├── xdc/              # constraint file
@@ -44,7 +44,7 @@ Dragon/
 
 ## Simulation & Verification
 
-The tests consist of two assembly programs, `rv32.s` and `rv64.s` (for future extension), for RV32 and RV64 instruction sets, which are located in [tests](./tests/). Alongside assembly tests there is also a linker script that is needed to turn assembly code into binary. Both tests cover all instruction types (R, I, S, B, U, J) and hazard scenarios. Individual instruction test cases are on the way. Simulation is performed in Vivado Simulator. Functional correctness of the design is validated with waveform-based verification. If you decide to write your own tests, the following link provides a web-based RISC-V assembler that can be used to turn assembly code into binary: [assembler](https://riscvasm.lucasteske.dev/)
+The tests consist of two assembly programs, `rv32.s` and `rv64.s` (for future extension), for RV32 and RV64 instruction sets, which are located in [tests](./tests/) folder. Alongside assembly tests there is also a linker script that is needed to turn assembly code into binary. Both tests cover all instruction types (R, I, S, B, U, J) and hazard scenarios. Individual instruction test cases are on the way. Simulation is performed in Vivado Simulator. Functional correctness of the design is validated with waveform-based verification. If you decide to write your own tests, the following link provides a web-based RISC-V assembler that can be used to turn assembly code into binary: [assembler](https://riscvasm.lucasteske.dev/)
 
 ---
 
@@ -57,8 +57,6 @@ The tests consist of two assembly programs, `rv32.s` and `rv64.s` (for future ex
 - Memory: BRAM-based instruction and data memories
 - Constraints: `./xdc/constraints.xdc`
 - Status: Awaiting behavioral verification completion before synthesis
-
-<!-- **Status**: Design ready for synthesis (pending verification completion) -->
 
 ---
 
